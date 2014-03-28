@@ -29,8 +29,8 @@ class Project(models.Model):
 
 class TaskManager(models.Manager):
     def current_month_tasks(self):
-      a = []
-      for current in self.all():
+      a =[]
+      for current in self.all().order_by('project__name'):
         if list(current.timer_set.all())[-1].final_time.month == datetime.datetime.today().month:
           a.append(current)
       return a
