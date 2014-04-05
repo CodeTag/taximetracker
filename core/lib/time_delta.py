@@ -1,6 +1,6 @@
 class TimeDelta:
     def __init__(self, _seconds):
-        self.seconds = _seconds
+        self.seconds = _seconds or 0
 
     @property
     def minutes(self):
@@ -17,10 +17,7 @@ class TimeDelta:
     @property
     def hours_formated(self):
 
-        if self.seconds == None:
-            return "00:00:00"
-
-        hours = self.seconds / 3600
+        hours = self.hours
         minutes = (self.seconds % 3600) / 60
         seconds = (self.seconds % 3600) % 60
 
