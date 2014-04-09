@@ -18,7 +18,10 @@ class TimeDelta:
     def hours_formated(self):
 
         hours = self.hours
-        minutes = (self.seconds % 3600) / 60
-        seconds = (self.seconds % 3600) % 60
+
+        remaining_seconds = self.seconds % 3600
+
+        minutes = (remaining_seconds) / 60
+        seconds = (remaining_seconds) % 60
 
         return "%.2d:%.2d:%.2d" % (hours, minutes, seconds)
