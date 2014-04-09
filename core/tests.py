@@ -155,6 +155,30 @@ class TimeDeltaTest(TestCase):
         delta = TimeDelta(86400)
         self.assertEqual(delta.days, 1)
 
+    def test_hours_formated_should_return_00_00_31_when_31_seconds_are_passed_to_the_connstructor(self):
+        delta = TimeDelta(31)
+        self.assertEqual(delta.hours_formated, "00:00:31")
+
+    def test_hours_formated_should_return_00_15_12_when_912_seconds_are_passed_to_the_connstructor(self):
+        delta = TimeDelta(912)
+        self.assertEqual(delta.hours_formated, "00:15:12")
+
+    def test_hours_formated_should_return_90_15_12_when_324912_seconds_are_passed_to_the_connstructor(self):
+        delta = TimeDelta(324912)
+        self.assertEqual(delta.hours_formated, "90:15:12")
+
+    def test_hours_formated_should_return_190_15_12_when_684912_seconds_are_passed_to_the_connstructor(self):
+        delta = TimeDelta(684912)
+        self.assertEqual(delta.hours_formated, "190:15:12")
+
+    def test_hours_formated_should_return_00_00_00_when_0_seconds_are_passed_to_the_connstructor(self):
+        delta = TimeDelta(0)
+        self.assertEqual(delta.hours_formated, "00:00:00")
+
+    def test_hours_formated_should_return_00_00_00_when_None_is_passed_to_the_connstructor(self):
+        delta = TimeDelta(None)
+        self.assertEqual(delta.hours_formated, "00:00:00")
+
 
 class StartTaskTest(TestCase):
 
