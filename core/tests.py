@@ -9,6 +9,8 @@ from core.models import search_existing_project
 import datetime
 from core.lib.time_delta import TimeDelta
 
+from registration.models import RegistrationProfile
+
 from django.test import LiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 
@@ -43,6 +45,46 @@ class UserValidationTests(LiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/'))
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/accounts/login/'))
 
+    def test_when_a_user_with_inactive_account_login_the_body_show_correctly_a_error_message(self):
+
+        RegistrationProfile.objects.create_inactive_user("jefree", "jgarzon920429@gmail.com", "1234", "", False)
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('1234')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        body = self.selenium.find_element_by_tag_name('body')
+
+        self.assertIn("Please correct the errors below:", body.text)
+        self.assertIn("This account is inactive", body.text)
+
+        self.assertNotIn("__all__", body.text)
+
+    def test_when_a_login_error_ocurrs_the_body_show_correctly_a_error_message(self):
+        User.objects.create_user(username="cesar", password="1234")
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('miclave123')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        body = self.selenium.find_element_by_tag_name('body')
+
+        self.assertIn("Please correct the errors below:", body.text)
+        self.assertIn("Please enter a correct username and password. Note that both fields may be case-sensitive.", body.text)
+
+        self.assertNotIn("__all__", body.text)
 
 class YourTaskTemplateTest(TestCase):
 
