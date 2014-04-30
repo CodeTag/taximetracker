@@ -5,19 +5,24 @@
 {% block content %}
 
 <h1><strong>TaximeTracker</strong></h1>
-
-{% if form.errors %}
-<p class="error">Please correct the errors below:</p>
-{{ form.errors }}
-{% endif %}
+{{ form.non_field_errors }}
 
 <form method="post" action="?next={{ next|default:"/" }}">{% csrf_token %}
-<dl>
-<dt><label for="id_username">Username:</label>{% if form.username.errors %} <span class="error">{{ form.username.errors|join:", " }}</span>{% endif %}</dt>
-<dd>{{ form.username }}</dd>
-<dt><label for="id_password">Password:</label>{% if form.password.errors %} <span class="error">{{ form.password.errors|join:", " }}</span>{% endif %}</dt>
-<dd>{{ form.password }}</dd>
-<dt><input type="submit" class="btn btn-lg btn-primary" value="Log in" /></dt>
+  <ul>
+    <li>
+      <label for="id_username">Username:</label>
+      {{ form.username }}
+      <span class="error">{{ form.username.errors|join:", " }}</span>
+    </li>
+    <li>
+      <label for="id_password">Password:</label>
+      {{ form.password }}
+      <span class="error">{{ form.password.errors|join:", " }}</span>
+    </li>
+    <li>
+      <input type="submit" class="btn btn-lg btn-primary" value="Log in" />
+    </li>
+ </ul>
 </dl>
 </form>
 <table>
@@ -32,9 +37,6 @@
     </form>
 </tr>
 </table>
-
-
-
 
 {% endblock %}
 
