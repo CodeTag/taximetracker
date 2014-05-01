@@ -66,7 +66,7 @@ class Task(models.Model):
 
     def time_formated(self):
         delta = self.calculate_time()
-        return "%02d:%02d:%02d" % (delta.days, delta.hours, delta.minutes)
+        return delta.hours_formated
 
 
     def calculate_cost(self):
