@@ -8,6 +8,7 @@ from core.models import stop_fast_task, choise_action_fast_task, start_fast_task
 from core.models import search_existing_project
 import datetime
 from core.lib.time_delta import TimeDelta
+from factories import ProjectFactory
 
 from registration.models import RegistrationProfile
 
@@ -101,8 +102,7 @@ class YourTaskTemplateTest(TestCase):
     def test_al_hacer_get_en_enlace_de_tareas_del_mes_actual_muestra_solo_esas_tareas(self):
         user = User.objects.create(username="cesar", password="1234")
 
-        project=Project(name="test_project",price_per_hour=4000)
-        project.save()
+        project = ProjectFactory()
 
         t1 = Task(name="tarea1", user=user, project=project)
         t1.save()
