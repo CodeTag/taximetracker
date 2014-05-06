@@ -61,7 +61,6 @@ class UserValidationTests(LiveServerTestCase):
 
         body = self.selenium.find_element_by_tag_name('body')
 
-        self.assertIn("Please correct the errors below:", body.text)
         self.assertIn("This account is inactive", body.text)
 
         self.assertNotIn("__all__", body.text)
@@ -81,7 +80,6 @@ class UserValidationTests(LiveServerTestCase):
 
         body = self.selenium.find_element_by_tag_name('body')
 
-        self.assertIn("Please correct the errors below:", body.text)
         self.assertIn("Please enter a correct username and password. Note that both fields may be case-sensitive.", body.text)
 
         self.assertNotIn("__all__", body.text)
