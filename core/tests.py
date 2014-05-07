@@ -8,7 +8,7 @@ from core.models import stop_fast_task, choise_action_fast_task, start_fast_task
 from core.models import search_existing_project
 import datetime
 from core.lib.time_delta import TimeDelta
-from factories import ProjectFactory
+from factories import ProjectFactory, TaskFactory
 
 from registration.models import RegistrationProfile
 
@@ -104,23 +104,20 @@ class YourTaskTemplateTest(TestCase):
 
         project = ProjectFactory()
 
-        t1 = Task(name="tarea1", user=user, project=project)
-        t1.save()
+        t1 = TaskFactory(user=user, project=project)
         t1.start()
         t1.stop()
 
         other_month = datetime.datetime.now() - datetime.timedelta(days=32)
 
-        t2= Task(name="tarea2", user=user,project=project)
-        t2.save()
+        t2 = TaskFactory(user=user, project=project)
         t2.current_timer = Timer(task=t2)
         t2.current_timer.initial_time = other_month
         t2.current_timer.save()
         t2.save()
         t2.stop()
 
-        t3=Task(name="tarea3",user=user,project=project)
-        t3.save()
+        t3 = TaskFactory(user=user, project=project)
         t3.current_timer = Timer(task=t3)
         t3.current_timer.initial_time = other_month
         t3.current_timer.save()
@@ -144,14 +141,14 @@ class YourTaskTemplateTest(TestCase):
         project=Project(name="test_project",price_per_hour=4000)
         project.save()
 
-        t1 = Task(name="tarea1", user=user, project=project)
+        t1 = TaskFactory(user=user, project=project)
         t1.save()
         t1.start()
         t1.stop()
 
         other_month = datetime.datetime.now() - datetime.timedelta(days=32)
 
-        t2= Task(name="tarea2", user=user,project=project)
+        t2= TaskFactory(user=user,project=project)
         t2.save()
         t2.current_timer = Timer(task=t2)
         t2.current_timer.initial_time = other_month
@@ -159,7 +156,7 @@ class YourTaskTemplateTest(TestCase):
         t2.save()
         t2.stop()
 
-        t3=Task(name="tarea3",user=user,project=project)
+        t3=TaskFactory(user=user,project=project)
         t3.save()
         t3.current_timer = Timer(task=t3)
         t3.current_timer.initial_time = other_month
