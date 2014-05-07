@@ -11,16 +11,16 @@ class ProjectFactory(factory.DjangoModelFactory):
     price_per_hour = 4000
 
 class TaskFactory(factory.DjangoModelFactory):
-	FACTORY_FOR = Task
+    FACTORY_FOR = Task
 
-	name = FuzzyText(length=2, prefix="task")
-	description = "A test task"
-	project = factory.SubFactory(ProjectFactory)
-	started = False
+    name = FuzzyText(length=2, prefix="task")
+    description = "A test task"
+    project = factory.SubFactory(ProjectFactory)
+    started = False
 
 class TimerFactory(factory.DjangoModelFactory):
-	FACTORY_FOR = Timer
+    FACTORY_FOR = Timer
 
-	initial_time = FuzzyDate(datetime.date(2014, 4, 7))
-	final_time = FuzzyDate(datetime.date(2014, 4, 7))
-	task = factory.SubFactory(TaskFactory)
+    initial_time = None
+    final_time = None
+    task = factory.SubFactory(TaskFactory)
