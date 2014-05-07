@@ -1,12 +1,13 @@
 import factory
-from factory.fuzzy import FuzzyText
+import datetime
+from factory.fuzzy import FuzzyText, FuzzyDate
 from django.contrib.auth.models import User
-from core.models import Project, Task
+from core.models import Project, Task, Timer
 
 class ProjectFactory(factory.DjangoModelFactory):
     FACTORY_FOR = Project
 
-    name = "test_project"
+    name = FuzzyText(length=2, prefix="test_project")
     price_per_hour = 4000
 
 class TaskFactory(factory.DjangoModelFactory):
@@ -17,3 +18,9 @@ class TaskFactory(factory.DjangoModelFactory):
 	project = factory.SubFactory(ProjectFactory)
 	started = False
 
+class TimerFactory(factory.DjangoModelFactory):
+	FACTORY_FOR = Timer
+
+	initial_time = FuzzyDate(datetime.date(2014, 4, 7))
+	final_time = FuzzyDate(datetime.date(2014, 4, 7))
+	task = factory.SubFactory(TaskFactory)
