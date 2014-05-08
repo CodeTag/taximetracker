@@ -443,7 +443,7 @@ class TaskTest(TestCase):
         t3.current_timer = TimerFactory(task=t3, initial_time=datetime.today(), final_time=datetime.today())
 
         result = Task.objects.current_month_tasks()
-        self.assertEqual(result, [t2, t3])
+        self.assertEqual(result, [t3, t2])
 
     def test_create_task_debe_crear_una_tarea_con_todos_sus_elementos_a_partir_de_datos_validos(self):
         user = User.objects.create(username="cesar",password="1234")
