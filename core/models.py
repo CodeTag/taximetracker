@@ -68,7 +68,6 @@ class Task(models.Model):
         delta = self.calculate_time()
         return delta.hours_formated
 
-
     def calculate_cost(self):
         hours = self.calculate_time().hours
         if self.project:
@@ -76,7 +75,6 @@ class Task(models.Model):
         else:
             current_cost = 0
         return current_cost
-
 
 class Timer(models.Model):
     initial_time = models.DateTimeField(null=True)

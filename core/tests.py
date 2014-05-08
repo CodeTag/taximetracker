@@ -130,8 +130,7 @@ class YourTaskTemplateTest(TestCase):
 
         user = User.objects.create(username="cesar", password="1234")
 
-        project=Project(name="test_project",price_per_hour=4000)
-        project.save()
+        project = ProjectFactory()
 
         t1 = TaskFactory(user=user, project=project)
         t1.start()
@@ -154,8 +153,6 @@ class YourTaskTemplateTest(TestCase):
         self.assertIn(t2.name,result.content)
         self.assertIn(t3.name,result.content)
         self.assertEqual(result.status_code,200)
-
-
 
 class TimeDeltaTest(TestCase):
     def test_seconds_deberia_retornar_86400_cuando_se_pasan_86400_segundos_al_constructor(self):
@@ -197,7 +194,6 @@ class TimeDeltaTest(TestCase):
     def test_hours_formated_should_return_00_00_00_when_None_is_passed_to_the_connstructor(self):
         delta = TimeDelta(None)
         self.assertEqual(delta.hours_formated, "00:00:00")
-
 
 class StartTaskTest(TestCase):
 
@@ -245,12 +241,13 @@ class HomeTest(TestCase):
 
     def test_al_hacer_post_se_crea_una_tarea(self):
         user = User.objects.create(username="cesar", password="1234")
-        p=Project(name="testProject",price_per_hour=4000)
-        p.save()
+
+        p = ProjectFactory()
+
         factory = RequestFactory()
         request = factory.post("/home")
         request.user = user
-        request.POST["projectname"] = "testProject"
+        request.POST["projectname"] = p.name
         request.POST["taskname"] = "testTask"
         result = home(request)
         projects_number = Project.objects.all().count()
@@ -258,15 +255,15 @@ class HomeTest(TestCase):
         self.assertEqual(projects_number, 1)
         self.assertEqual(tasks_number, 1)
 
-
 class YourtasksTest(TestCase):
 
     def test_al_hacer_post_para_inciar_una_tarea(self):
         user= User.objects.create(username="cesar",password="1234")
         factory = RequestFactory()
         request = factory.post("/yourtasks")
-        p = Project(name="testProject",price_per_hour=4000)
-        p.save()
+        
+        p = ProjectFactory()
+        
         t = Task(name="tarea1", user=user, started=True, project=p)
         t.save()
         request.user = user
@@ -280,8 +277,9 @@ class YourtasksTest(TestCase):
         user= User.objects.create(username="cesar",password="1234")
         factory = RequestFactory()
         request = factory.post("/yourtasks")
-        p = Project(name="testProject",price_per_hour=4000)
-        p.save()
+        
+        p = ProjectFactory()
+        
         t = Task(name="tarea1", user=user, started=True, project=p)
         t.save()
         t.start()
@@ -365,7 +363,6 @@ class FastTaskTest(TestCase):
         projects_number = Project.objects.all().count()
         self.assertEqual(tasks_stopped+projects_number,0)
 
-
 class TaskTest(TestCase):
 
     def test_iniciar_una_tarea_para_crearle_un_cronometro_temporal_y_darle_su_tiempo_de_inicio(self):
@@ -447,8 +444,9 @@ class TaskTest(TestCase):
 
     def test_create_task_debe_crear_una_tarea_con_todos_sus_elementos_a_partir_de_datos_validos(self):
         user = User.objects.create(username="cesar",password="1234")
-        project = Project(name="test_project",price_per_hour=4000)
-        project.save()
+        
+        project = ProjectFactory()
+        
         factory = RequestFactory()
         request = factory.post("/yourtasks")
         request.user = user
@@ -466,8 +464,8 @@ class TaskTest(TestCase):
         self.assertEqual(projects, 1)
 
     def test_create_task_no_debe_crear_tarea_si_no_hay_un_usuario_predefinido(self):
-        project = Project(name="test_project",price_per_hour=4000)
-        project.save()
+        project = ProjectFactory()
+        
         factory = RequestFactory()
         request = factory.post("/yourtasks")
         request.POST["taskname"] = ""
@@ -478,8 +476,9 @@ class TaskTest(TestCase):
 
     def test_create_task_debe_crear_una_tarea_aunque_esten_todos_sus_campos_vacios_menos_el_usuario(self):
         user = User.objects.create(username="cesar",password="1234")
-        project = Project(name="test_project",price_per_hour=4000)
-        project.save()
+        
+        project = ProjectFactory()
+        
         factory = RequestFactory()
         request = factory.post("/yourtasks")
         request.user = user
