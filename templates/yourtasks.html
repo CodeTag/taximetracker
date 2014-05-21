@@ -64,7 +64,7 @@
         <th>Action</th>
       </tr>
 
-      <form  method='POST' action='/fasttask/'  enctype="multipart/form-data">
+      <form  method='POST' action='/fasttask/{{current_list}}'  enctype="multipart/form-data">
         {% csrf_token %}
 
         <tr>
