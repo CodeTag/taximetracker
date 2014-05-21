@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from core.lib.time_delta import TimeDelta
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 import datetime
 
 def calculate_total_cost(user) :
@@ -136,3 +138,14 @@ def search_task(request):
         return Task.objects.filter(name = "in_progress", user=request.user)
     else:
         return None
+
+@receiver(post_save, sender=Task)
+def create_default_timer(sender, instance, created, **kwargs):
+
+    if created:
+
+        timer = Timer(task=instance, initial_time=datetime.datetime.today(), final_time=datetime.datetime.today())
+        instance.current_timer = timer
+        
+        instance.current_timer.save()
+        instance.save()
