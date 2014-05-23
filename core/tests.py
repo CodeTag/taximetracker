@@ -27,7 +27,7 @@ class TaskRedirectionTests(LiveServerTestCase):
         cls.selenium.quit()
         super(TaskRedirectionTests, cls).tearDownClass()
 
-    def test_when_create_task_on_current_month_tasks_its_redirect_to_current_month_tasks(self):
+    def test_when_create_fasttask_on_current_month_its_redirect_to_current_month(self):
 
         User.objects.create_user(username="jefree", password="1234")
 
@@ -49,7 +49,7 @@ class TaskRedirectionTests(LiveServerTestCase):
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
 
 
-    def test_when_create_task_on_yourtasks_its_redirect_to_yourtasks(self):
+    def test_when_create_fasttask_on_yourtasks_its_redirect_to_yourtasks(self):
 
         User.objects.create_user(username="jefree", password="1234")
 
@@ -70,7 +70,7 @@ class TaskRedirectionTests(LiveServerTestCase):
 
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/'))
 
-    def test_when_stop_a_task_on_current_month_tasks_its_redirect_to_current_month_tasks(self):
+    def test_when_stop_a_fasttask_on_current_month_its_redirect_to_current_month(self):
 
         User.objects.create_user(username="jefree", password="1234")
 
@@ -93,7 +93,7 @@ class TaskRedirectionTests(LiveServerTestCase):
 
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
 
-    def test_when_stop_a_task_on_yourtasks_its_redirect_to_yourtasks(self):
+    def test_when_stop_a_fasttask_on_yourtasks_its_redirect_to_yourtasks(self):
 
         User.objects.create_user(username="jefree", password="1234")
 
