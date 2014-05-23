@@ -10,6 +10,7 @@ from factories import ProjectFactory, TaskFactory, TimerFactory
 from registration.models import RegistrationProfile
 
 from django.test import LiveServerTestCase
+from django.test.client import Client
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from datetime import timedelta, datetime
@@ -69,6 +70,51 @@ class TaskRedirectionTests(LiveServerTestCase):
 
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/'))
 
+    def test_when_stop_a_task_on_current_month_tasks_its_redirect_to_current_month_tasks(self):
+
+        User.objects.create_user(username="jefree", password="1234")
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('1234')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        #start a fasttask
+        self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        #stop the fasttask already created
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
+
+    def test_when_stop_a_task_on_yourtasks_its_redirect_to_yourtasks(self):
+
+        User.objects.create_user(username="jefree", password="1234")
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('1234')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        #start a fasttask
+        self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/'))
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        #stop the fasttask already created
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/'))
 
 class UserValidationTests(LiveServerTestCase):
 
