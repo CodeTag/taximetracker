@@ -294,6 +294,17 @@ class TimeDeltaTest(TestCase):
         delta = TimeDelta(None)
         self.assertEqual(delta.hours_formated, "00:00:00")
 
+class TaskCreationTest(TestCase):
+
+    def test_all_new_task_should_have_a_default_timer(self):
+
+        user = User.objects.create_user(username='Jefree', password='codetag.me')
+        
+        task = TaskFactory(user=user)
+        timers = task.timer_set.all()
+
+        self.assertEqual(len(timers), 1)
+
 class StartTaskTest(TestCase):
 
     def test_iniciar_tarea_para_cambiarle_el_estado_y_asignarle_un_timer(self):
