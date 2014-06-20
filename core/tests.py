@@ -10,9 +10,111 @@ from factories import ProjectFactory, TaskFactory, TimerFactory
 from registration.models import RegistrationProfile
 
 from django.test import LiveServerTestCase
+from django.test.client import Client
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from datetime import timedelta, datetime
+
+class TaskRedirectionTests(LiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.selenium = WebDriver()
+        super(TaskRedirectionTests, cls).setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(TaskRedirectionTests, cls).tearDownClass()
+
+    def test_when_create_fasttask_on_current_month_its_redirect_to_current_month(self):
+
+        User.objects.create_user(username="jefree", password="1234")
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('1234')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/current_month'))
+
+        #press fasttask button
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
+
+
+    def test_when_create_fasttask_on_yourtasks_its_redirect_to_yourtasks(self):
+
+        User.objects.create_user(username="jefree", password="1234")
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('1234')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/'))
+
+        #press fasttask button
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/'))
+
+    def test_when_stop_a_fasttask_on_current_month_its_redirect_to_current_month(self):
+
+        User.objects.create_user(username="jefree", password="1234")
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('1234')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        #start a fasttask
+        self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        #stop the fasttask already created
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
+
+    def test_when_stop_a_fasttask_on_yourtasks_its_redirect_to_yourtasks(self):
+
+        User.objects.create_user(username="jefree", password="1234")
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('jefree')
+
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('1234')
+
+        self.selenium.find_element_by_xpath('//input[@value="Log in"]').click()
+
+        #start a fasttask
+        self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/'))
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        #stop the fasttask already created
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/'))
 
 class UserValidationTests(LiveServerTestCase):
 
@@ -192,6 +294,17 @@ class TimeDeltaTest(TestCase):
         delta = TimeDelta(None)
         self.assertEqual(delta.hours_formated, "00:00:00")
 
+class TaskCreationTest(TestCase):
+
+    def test_all_new_task_should_have_a_default_timer(self):
+
+        user = User.objects.create_user(username='Jefree', password='codetag.me')
+        
+        task = TaskFactory(user=user)
+        timers = task.timer_set.all()
+
+        self.assertEqual(len(timers), 1)
+
 class StartTaskTest(TestCase):
 
     def test_iniciar_tarea_para_cambiarle_el_estado_y_asignarle_un_timer(self):
@@ -202,11 +315,11 @@ class StartTaskTest(TestCase):
         
         start_task(t)
         tasks_started = Task.objects.filter(started=True).count()
-        self.assertEqual(tasks_started,1)
+        self.assertEqual(tasks_started, 1)
         temporal_timer = t.current_timer
-        self.assertEqual(temporal_timer, Timer.objects.all()[0])
+        self.assertEqual(temporal_timer, Timer.objects.all()[1])
         timers = Timer.objects.all().count()
-        self.assertEqual(timers,1)
+        self.assertEqual(timers, 2)
 
 class StopTaskTest(TestCase):
     def test_detener_tarea_para_cambiarle_el_estado_y_liberar_su_timer_temporal(self):
@@ -221,7 +334,7 @@ class StopTaskTest(TestCase):
         temporal_timer = t.current_timer
         self.assertEqual(temporal_timer, None)
         timers = Timer.objects.all().count()
-        self.assertEqual(timers,1)
+        self.assertEqual(timers, 2)
 
 class ProjectTest(TestCase):
 
@@ -374,7 +487,7 @@ class TaskTest(TestCase):
         timers = t1.timer_set.all().count()
         time = t1.current_timer
 
-        self.assertEqual(timers, 1)
+        self.assertEqual(timers, 2)
         self.assertEqual(time.initial_time.second, 1)
 
     def test_pausar_una_tarea_para_desvicularle_el_cronometro_temporal_y_asignarle_tiempo_final(self):
@@ -393,7 +506,7 @@ class TaskTest(TestCase):
         self.assertEqual(timer_in_task, None)
         
         timers= t1.timer_set.all().count()
-        self.assertEqual(timers,1)
+        self.assertEqual(timers, 2)
 
     def test_calcular_tiempo_para_devolver_el_tiempo_total_de_una_tarea(self):
         user = User.objects.create(username="cesar",password="1234")
