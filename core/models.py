@@ -56,7 +56,7 @@ class Task(models.Model):
         self.save()
 
     def stop(self):
-        self.current_timer = Timer.objects.get(task=self, final_time=None)
+        self.current_timer = list(self.timer_set.all())[-1]
         self.current_timer.final_time=datetime.datetime.now()
         self.current_timer.save()
         self.current_timer = None
