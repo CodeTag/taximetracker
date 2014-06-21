@@ -46,7 +46,7 @@ def content_yourtasks(request):
         choise_action_yourtasks(Task.objects.get(id = alldata.get("task_selected")), alldata.get("choisebuttom"))
         return HttpResponseRedirect('/yourtasks')
     tasks = request.user.task_set.all().order_by('project__name')
-    return render(request, 'yourtasks.html', {'tasks':tasks, 'last_task':last_task})
+    return render(request, 'yourtasks.html', {'tasks':tasks, 'last_task':last_task, 'current_list':''})
 
 
 def yourtasks_current_month(request):
@@ -59,16 +59,16 @@ def content_yourtasks_current_month(request):
         choise_action_yourtasks(Task.objects.get(id = alldata.get("task_selected")), alldata.get("choisebuttom"))
         return HttpResponseRedirect('/yourtasks/current_month')
     tasks = request.user.task_set.current_month_tasks()
-    return render(request, 'yourtasks.html', {'tasks':tasks, 'last_task':last_task})
+    return render(request, 'yourtasks.html', {'tasks':tasks, 'last_task':last_task, 'current_list':'current_month'})
 
 
-def fast_task(request):
-    return content_fast_task(request)
+def fast_task(request, current_list=''):
+    return content_fast_task(request, current_list)
 
-def content_fast_task(request):
+def content_fast_task(request, current_list):
     if request.method == 'POST':
         choise_action_fast_task(request.POST.get("choisebuttom"),request.POST, request.user)
-        return HttpResponseRedirect('/yourtasks')
+        return HttpResponseRedirect('/yourtasks/%s' % current_list)
 
 class AuthenticationMiddleware(object):
     def process_request(self, request):

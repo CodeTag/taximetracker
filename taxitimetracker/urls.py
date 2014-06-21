@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     url(r'^yourtasks/$', yourtasks, name="yourtasks"),
     url(r'^yourtasks/current_month/$', yourtasks_current_month, name="current_month_tasks"),
     url(r'^yourtasks/all_tasks/$', yourtasks, name="all_tasks"),
-    url(r'^fasttask/$', fast_task, name="fasttask"),
+    url(r'^fasttask/([a-z_]*)$', fast_task, name="fasttask"),
     # url(r'^taxitimetracker/', include('taxitimetracker.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

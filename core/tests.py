@@ -44,7 +44,7 @@ class TaskRedirectionTests(LiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/current_month'))
 
         #press fasttask button
-        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/current_month"]').submit()
 
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
 
@@ -86,10 +86,10 @@ class TaskRedirectionTests(LiveServerTestCase):
 
         #start a fasttask
         self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
-        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/current_month"]').submit()
 
         #stop the fasttask already created
-        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/current_month"]').submit()
 
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
 
