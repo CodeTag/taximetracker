@@ -321,6 +321,17 @@ class StartTaskTest(TestCase):
         timers = Timer.objects.all().count()
         self.assertEqual(timers, 2)
 
+    def test_when_a_task_is_started_the_new_timer_has_final_time_equal_to_initial_time(self):
+        user = User.objects.create(username="cesar", password="1234")
+
+        task = TaskFactory(user=user)
+        start_task(task)
+
+        last_timer = list(task.timer_set.all())[-1]
+
+        self.assertEquals(last_timer.final_time, last_timer.initial_time)
+
+
 class StopTaskTest(TestCase):
     def test_detener_tarea_para_cambiarle_el_estado_y_liberar_su_timer_temporal(self):
         user = User.objects.create(username="cesar", password="1234")
