@@ -51,6 +51,7 @@ class Task(models.Model):
     def start(self):
         self.current_timer = Timer(task=self)
         self.current_timer.initial_time = datetime.datetime.now()
+        self.current_timer.final_time = self.current_timer.initial_time
         self.current_timer.save()
         self.save()
 
