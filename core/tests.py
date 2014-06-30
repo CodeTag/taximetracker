@@ -44,7 +44,7 @@ class TaskRedirectionTests(LiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/current_month'))
 
         #press fasttask button
-        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/current_month"]').submit()
 
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
 
@@ -86,10 +86,11 @@ class TaskRedirectionTests(LiveServerTestCase):
 
         #start a fasttask
         self.selenium.get('%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
-        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/current_month"]').submit()
 
         #stop the fasttask already created
-        self.selenium.find_element_by_xpath('//form[@action="/fasttask/"]').submit()
+        self.selenium.find_element_by_xpath('//form[@action="/fasttask/current_month"]').submit()
 
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/yourtasks/current_month/'))
 
@@ -304,6 +305,28 @@ class TaskCreationTest(TestCase):
         timers = task.timer_set.all()
 
         self.assertEqual(len(timers), 1)
+
+
+class TimerCreationTest(TestCase):
+
+    def test_when_a_timer_is_created_its_initial_time_is_not_equal_to_None(self):
+
+        user = User.objects.create(username="cesar", password="1234")
+
+        task = TaskFactory(user=user)
+        timer = TimerFactory(task=task)
+
+        self.assertNotEquals(timer.initial_time, None)
+
+    def test_when_a_timer_is_created_its_final_time_is_equal_to_its_initial_time(self):
+
+        user = User.objects.create(username="cesar", password="1234")
+
+        task = TaskFactory(user=user)
+        timer = TimerFactory(task=task)
+
+        self.assertEquals(timer.final_time, timer.initial_time)
+
 
 class StartTaskTest(TestCase):
 

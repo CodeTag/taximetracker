@@ -51,11 +51,12 @@ class Task(models.Model):
     def start(self):
         self.current_timer = Timer(task=self)
         self.current_timer.initial_time = datetime.datetime.now()
+        self.current_timer.final_time = self.current_timer.initial_time
         self.current_timer.save()
         self.save()
 
     def stop(self):
-        self.current_timer = Timer.objects.get(task=self, final_time=None)
+        self.current_timer = list(self.timer_set.all())[-1]
         self.current_timer.final_time=datetime.datetime.now()
         self.current_timer.save()
         self.current_timer = None
@@ -143,9 +144,15 @@ def search_task(request):
 def create_default_timer(sender, instance, created, **kwargs):
 
     if created:
-
-        timer = Timer(task=instance, initial_time=datetime.datetime.today(), final_time=datetime.datetime.today())
-        instance.current_timer = timer
+        timer = Timer(task=instance)        
+        timer.save()
         
-        instance.current_timer.save()
+
+@receiver(post_save, sender=Timer)
+def set_initial_time(sender, instance, created, **kwargs):
+
+    if created and instance.initial_time == None and instance.final_time == None:
+       
+        instance.initial_time = datetime.datetime.today()
+        instance.final_time = instance.initial_time
         instance.save()
