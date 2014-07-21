@@ -48,7 +48,6 @@ def content_yourtasks(request):
     tasks = request.user.task_set.all().order_by('project__name')
     return render(request, 'yourtasks.html', {'tasks':tasks, 'last_task':last_task, 'current_list':''})
 
-
 def yourtasks_current_month(request):
     return content_yourtasks_current_month(request)
 
@@ -69,6 +68,22 @@ def content_fast_task(request, current_list):
     if request.method == 'POST':
         choise_action_fast_task(request.POST.get("choisebuttom"),request.POST, request.user)
         return HttpResponseRedirect('/yourtasks/%s' % current_list)
+
+def report_view(request):
+
+    if request.method == "POST":
+        return report_project(request)
+
+    projects = Project.objects.all()
+    return render(request, "report_home.html", {'projects': projects})
+
+def report_project(request):
+
+    begin = request.POST["begin"] + " 00:00"
+    end = request.POST["end"] + " 00:00"
+    project = Project.objects.get(name=request.POST["project"])
+
+    return render(request, "report_project.html", {'project': project, 'tasks': project.task_set.all()})
 
 class AuthenticationMiddleware(object):
     def process_request(self, request):
