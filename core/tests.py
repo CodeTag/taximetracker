@@ -375,6 +375,33 @@ class ProjectTest(TestCase):
    
         self.assertEqual(projects_number, 1)
 
+    def test_get_tasks_between_should_return_a_tasks_list_that_have_timers_in_that_time(self):
+
+        user = User.objects.create(username="jefree", password="mypassword")
+        project = ProjectFactory()
+
+        task1 = TaskFactory(user=user, project=project)
+        task2 = TaskFactory(user=user, project=project)
+        task3 = TaskFactory(user=user, project=project)
+
+        time1 = { 'begin': datetime(2014, 06, 12, 17, 00), 'end': datetime(2014, 06, 25, 5, 00) }
+        time2 = { 'begin': datetime(2014, 07, 16, 22, 00), 'end': datetime(2014, 07, 19, 13, 00) }
+        time3 = { 'begin': datetime(2012, 07, 17, 22, 00), 'end': datetime(2012, 07, 19, 13, 00) }
+        time4 = { 'begin': datetime(2012, 07, 22, 10, 00), 'end': datetime(2012, 07, 29, 9, 00) }
+
+        task1_timer1 = TimerFactory(task=task1, initial_time=time1['begin'], final_time=time1['end'])
+        task1_timer2 = TimerFactory(task=task1, initial_time=time2['begin'], final_time=time2['end'])
+
+        task2_timer1 = TimerFactory(task=task2, initial_time=time3['begin'], final_time=time3['end'])
+        task2_timer2 = TimerFactory(task=task2, initial_time=time4['begin'], final_time=time4['end'])
+
+        task3_timer1 = TimerFactory(task=task3, initial_time=time4['begin'], final_time=time4['end'])
+        task3_timer2 = TimerFactory(task=task3, initial_time=time2['begin'], final_time=time2['end'])
+
+        self.assertEqual(project.get_tasks_between(time2['begin'], time2['end']), [task1, task3])
+        self.assertEqual(project.get_tasks_between(time4['begin'], time4['end']), [task2, task3])
+
+
 class HomeTest(TestCase):
 
     def test_al_hacer_post_se_crea_una_tarea(self):
