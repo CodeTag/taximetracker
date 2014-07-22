@@ -29,6 +29,15 @@ class Project(models.Model):
 
       return total
 
+    def get_tasks_between(self, begin, end):
+        result = []
+
+        for task in self.task_set.all():
+            if (task.timer_set.filter(initial_time__gte=begin, final_time__lte=end).count() > 0):
+                result.append(task)
+
+        return result
+
 class TaskManager(models.Manager):
     def current_month_tasks(self):
       a =[]

@@ -380,9 +380,9 @@ class ProjectTest(TestCase):
         user = User.objects.create(username="jefree", password="mypassword")
         project = ProjectFactory()
 
-        task1 = TaskFactory(user=user, project=project)
-        task2 = TaskFactory(user=user, project=project)
-        task3 = TaskFactory(user=user, project=project)
+        task1 = TaskFactory(user=user, project=project, name='task1')
+        task2 = TaskFactory(user=user, project=project, name='task2')
+        task3 = TaskFactory(user=user, project=project, name='task3')
 
         time1 = { 'begin': datetime(2014, 06, 12, 17, 00), 'end': datetime(2014, 06, 25, 5, 00) }
         time2 = { 'begin': datetime(2014, 07, 16, 22, 00), 'end': datetime(2014, 07, 19, 13, 00) }
@@ -398,9 +398,8 @@ class ProjectTest(TestCase):
         task3_timer1 = TimerFactory(task=task3, initial_time=time4['begin'], final_time=time4['end'])
         task3_timer2 = TimerFactory(task=task3, initial_time=time2['begin'], final_time=time2['end'])
 
-        self.assertEqual(project.get_tasks_between(time2['begin'], time2['end']), [task1, task3])
-        self.assertEqual(project.get_tasks_between(time4['begin'], time4['end']), [task2, task3])
-
+        self.assertEqual( set( project.get_tasks_between(time2['begin'], time2['end'])), set( [task1, task3]) ) 
+        self.assertEqual( set( project.get_tasks_between(time4['begin'], time4['end'])), set( [task2, task3]) )
 
 class HomeTest(TestCase):
 
