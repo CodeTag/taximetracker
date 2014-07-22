@@ -88,6 +88,10 @@ class Task(models.Model):
             current_cost = 0
         return current_cost
 
+    def get_time_between(self, begin, end):
+        total_seconds = sum (timer.total_time for timer in self.timer_set.filter(initial_time__gte=begin, final_time__lte=end))
+        return datetime.timedelta(seconds=total_seconds)
+
 class Timer(models.Model):
     initial_time = models.DateTimeField(null=True)
     final_time = models.DateTimeField(null=True)
@@ -96,7 +100,7 @@ class Timer(models.Model):
     @property
     def total_time(self):
         timedelta = self.final_time-self.initial_time
-        return timedelta.seconds
+        return timedelta.total_seconds()
 
 def start_task(task):
     task.started = True
