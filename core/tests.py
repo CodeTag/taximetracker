@@ -658,3 +658,17 @@ class TaskTest(TestCase):
         self.assertRaises(ValueError,create_project, request)
         projects = Project.objects.all().count()
         self.assertEqual(projects, 0)
+
+    def test_get_time_between_should_return_the_sum_of_timers_in_that_time(self):
+        user = User.objects.create(username="jefree",password="mypassword")
+        task = TaskFactory(user=user)
+
+        time1 = { 'begin': datetime(2014, 06, 12, 17, 00), 'end': datetime(2014, 06, 25, 5, 00) }   #d:12 s:43200
+        time2 = { 'begin': datetime(2014, 07, 16, 22, 00), 'end': datetime(2014, 07, 19, 13, 00) }  #d:2  s:54000 
+        time3 = { 'begin': datetime(2012, 07, 17, 22, 00), 'end': datetime(2012, 07, 19, 13, 00) }  #d:1  s:54000
+
+        timer1 = TimerFactory(task=task, initial_time=time1['begin'], final_time=time1['end'])
+        timer2 = TimerFactory(task=task, initial_time=time2['begin'], final_time=time2['end'])
+        timer3 = TimerFactory(task=task, initial_time=time3['begin'], final_time=time3['end'])
+
+        self.assertEqual(task.get_time_between(time1['begin'], time2['end']), timedelta(15, 10800));
