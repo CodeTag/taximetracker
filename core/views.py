@@ -79,11 +79,16 @@ def report_view(request):
 
 def report_project(request):
 
-    begin = request.POST["begin"] + " 00:00"
-    end = request.POST["end"] + " 00:00"
+    begin = request.POST["begin"]
+    end = request.POST["end"]
     project = Project.objects.get(name=request.POST["project"])
 
-    return render(request, "report_project.html", {'project': project, 'tasks': project.task_set.all()})
+    tasks = []
+
+    for task in project.get_tasks_between(begin, end):
+        tasks.append({ 'name': task.name, 'hours': TimeDelta(tasks.get_time_between(begin, end)).hours })
+
+    return render(request, "report_project.html", {'project': project, 'tasks': tasks})
 
 class AuthenticationMiddleware(object):
     def process_request(self, request):

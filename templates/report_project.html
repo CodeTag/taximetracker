@@ -12,11 +12,13 @@
 
 		<thead>
 			<th>Nombre</th>
+			<th>Horas</th>
 		</thead>
 		
 		{% for task in tasks %}
 		<tr>
 			<td>{{ task.name }}</td>
+			<td>{{ task.hours }}</td>
 		</tr>
 		{% endfor %}
 
