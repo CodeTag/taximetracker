@@ -3,6 +3,7 @@ from core.models import Project, Task, Timer
 from django.contrib.auth.models import User
 from views import home, projects, yourtasks, fast_task, yourtasks_current_month
 from views import create_task, create_project
+from views import report_view
 from core.models import start_task, stop_task
 from core.lib.time_delta import TimeDelta
 from factories import ProjectFactory, TaskFactory, TimerFactory
@@ -186,6 +187,35 @@ class UserValidationTests(LiveServerTestCase):
         self.assertIn("Please enter a correct username and password. Note that both fields may be case-sensitive.", body.text)
 
         self.assertNotIn("__all__", body.text)
+
+class ReportTests(TestCase):
+
+    def test_when_post_to_projects_report_get_list_with_correct_timers(self):
+        user = User.objects.create(username="jefree", password="mypassword")
+        project = ProjectFactory()
+
+        task1 = TaskFactory(user=user, project=project, name='task1')
+        task2 = TaskFactory(user=user, project=project, name='task2')
+        
+        time1 = { 'begin': datetime(2014, 6, 12, 17, 0), 'end': datetime(2014, 6, 25, 5, 0) }
+        time2 = { 'begin': datetime(2014, 7, 16, 22, 0), 'end': datetime(2014, 7, 19, 13, 0) }
+        time3 = { 'begin': datetime(2014, 9, 10, 00, 0), 'end': datetime(2014, 9, 19, 0, 0) }
+
+        task1_timer1 = TimerFactory(task=task1, initial_time=time1['begin'], final_time=time1['end'])
+        task1_timer2 = TimerFactory(task=task1, initial_time=time2['begin'], final_time=time2['end'])
+
+        task2_timer1 = TimerFactory(task=task2, initial_time=time3['begin'], final_time=time3['end'])
+
+        request = RequestFactory().post('/projects/report')
+        request.POST['begin'] = time1['begin']
+        request.POST['end'] = time2['end']
+        request.POST['project'] = project.name
+
+        result = report_view(request)
+
+        self.assertIn('<td>%s</td>' % task1.name, result.content)
+        self.assertNotIn('<td>%s</td>' % task2.name, result.content)
+
 
 class YourTaskTemplateTest(TestCase):
 

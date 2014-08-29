@@ -6,6 +6,7 @@ from core.models import Project, Task, Timer
 from core.models import start_task, stop_task, stop_fast_task, choise_action_yourtasks
 from core.models import stop_fast_task, choise_action_fast_task, start_fast_task
 from core.models import search_existing_project, search_task
+from core.lib .time_delta import TimeDelta
 
 def home(request):
     return content_home(request)
@@ -72,23 +73,24 @@ def content_fast_task(request, current_list):
 def report_view(request):
 
     if request.method == "POST":
-        return report_project(request)
+        return project_report(request)
 
     projects = Project.objects.all()
     return render(request, "report_home.html", {'projects': projects})
 
-def report_project(request):
+def project_report(request):
 
     begin = request.POST["begin"]
     end = request.POST["end"]
+
     project = Project.objects.get(name=request.POST["project"])
 
     tasks = []
 
     for task in project.get_tasks_between(begin, end):
-        tasks.append({ 'name': task.name, 'hours': TimeDelta(tasks.get_time_between(begin, end)).hours })
+        tasks.append({ 'name': task.name, 'hours': TimeDelta(task.get_time_between(begin, end).seconds).hours })
 
-    return render(request, "report_project.html", {'project': project, 'tasks': tasks})
+    return render(request, "project_report.html", {'project': project, 'tasks': tasks})
 
 class AuthenticationMiddleware(object):
     def process_request(self, request):
